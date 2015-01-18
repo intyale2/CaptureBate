@@ -15,6 +15,8 @@ def Models_list(client):
 	except Exception, e:
 		logging.error('Some error during connecting to '+URL)
 		logging.error(e)
+		print 'error connecting to chaturbate'
+		return ''
 	soup = BeautifulSoup(r2.text)
 	#logging.debug('Page Source for ' + URL_follwed + '\n' + r2.text)
 	page_source = 'Page Source for ' + URL_follwed + '\n' + r2.text
@@ -49,82 +51,6 @@ def Select_models(Models_list):
         logging.warning('[Select_models]  No models for approving')
     return Model_list_approved
 
-def Password_hash(string):
-    #replace special chars for unix shell! \$ and \/ and \= mostly
-    string = string.replace("\u003D","\=")
-    string = string.replace("$", "\$")
-    string = string.replace("/", "\/")
-    return string
-
-
-
-
-def Get_links(client, Models_list_store):
-	## Get the models options for creating rtmpdump string
-    if (len(Models_list_store) != 0):
-        for model in Models_list_store:
-            r3 = client.get("https://chaturbate.com/"+model+"/")
-            soup = BeautifulSoup(r3.text)
-            script_list =  soup.findAll('script')
-            #logging.debug('[Get_links] Script Source for ' + "https://chaturbate.com/" + model + "/\n" + str(script_list))
-            page_source = '[Get_links] Script Source for ' + "https://chaturbate.com/" + model + "/\n" + str(script_list)
-            if Debugging == True:
-            	Store_Debug(page_source, model + "_source.log")
-            ## Put model_page_source in the temporary file
-            regex = re.compile(r""".*EmbedViewerSwf""", re.VERBOSE)
-
-
-            #print str(script_list).splitlines()
-            script_list_lines = str(script_list).splitlines()
-
-            for i,line in enumerate(script_list_lines):
-                match = regex.match(line)
-                pw_match = re.search(r"password:\s'(pbkdf2_sha256.*[\\u003D|=])", line)
-                if pw_match:
-                    logging.debug('[Get_Links] found hashed password: %s' % pw_match.group(1))
-                    pw = Password_hash(pw_match.group(1))
-
-                if match:
-                    flash_pl_ver = re.sub(',', '', re.sub(' ', '', re.sub('"', '', script_list_lines[i+1])))
-                    model_name = re.sub('\'', '', re.sub(',', '', re.sub(' ', '', re.sub('"', '', script_list_lines[i+2]))))
-                    stream_server = re.sub('\'', '', re.sub(',', '', re.sub(' ', '', re.sub('"', '', script_list_lines[i+3]))))
-                    logging.debug('Extracted:\n'+flash_pl_ver+'\n'+model_name+'\n'+stream_server)
-                    # write models rtmpdump string to file
-                    flinks = open(Script_folder+'/'+model+'.sh', 'w')
-                    flinks.write('#!/bin/sh\n')
-                    ts = time.time()
-                    st = datetime.datetime.fromtimestamp(ts).strftime('%Y.%d.%m_%H.%M')
-                    form_dict = {
-                        "rtmp_bin" : RTMPDUMP,
-                        "stream_server": stream_server,
-                        "model_name": model_name,
-                        "username": USER.lower(),
-                        "flash_ver": "2.645",
-                        "pw_hash": pw,
-                        "video_folder": Video_folder,
-                        "date_string": st,
-                    }
-                    flinks.write('%(rtmp_bin)s --quiet --live --rtmp "rtmp://%(stream_server)s/live-edge" --pageUrl "http://chaturbate.com/%(model_name)s" --conn S:%(username)s --conn S:%(model_name)s --conn S:%(flash_ver)s --conn S:%(pw_hash)s --token "m9z#$dO0qe34Rxe@sMYxx" --playpath "playpath" --flv "%(video_folder)s/Chaturbate_%(date_string)s_%(model_name)s.flv"' % form_dict)
-                    flinks.write('\n')
-                    flinks.close()
-                    os.chmod(Script_folder+'/'+model+'.sh', 0777)
-                    logging.info('[Get_links] ' + model+'.sh is created')
-    else:
-        logging.warning('[Get_links] No models to get!')
-
-def Rtmpdump_models():
-	models = []
-	for line in os.popen("ps xa | grep rtmpdump"):
-		fields = line.split()
-		pid = fields[0]
-		process = fields[4]
-		if process == RTMPDUMP:
-			#print process + pid
-			#print fields[19][2:]
-			models.append(fields[14][2:])
-	logging.debug('Rtmpdump shows the following models: \n' + str(models))
-	return models
-
 def Compare_lists(ml, mlr):
 	# Comparing old models list(Main list) to new(updated) models list
     # This loop is used for removing offline models from main list
@@ -139,3 +65,22 @@ def Compare_lists(ml, mlr):
     		ml_new.append(model)
     logging.debug("[Compare_lists] List of models after comparing:" + str(ml_new))
     return ml_new
+def addmodel(modelname):
+    models_online
+    # Checking that it's not already recording model
+    if not modelname in models_online:
+        try:
+            models_online.append(modelname)
+            logging.info('Starting recording of ' + modelname)
+            timestamp = time.strftime("%d-%m-%Y_%H-%M-%S")
+            path = Video_folder+'/'+modelname+'/'+modelname+'_'+timestamp+'.mp4'
+            if not os.path.exists(Video_folder+'/'+modelname):
+                logging.info('creating directory ' + Video_folder+'/'+modelname)
+                os.makedirs(Video_folder+'/'+modelname)
+            # Starting livestreamer
+            FNULL = open(os.devnull, 'w')
+            subprocess.check_call([LIVESTREAMER, '-Q', '--hls-segment-threads', '6','-o',path,'https://chaturbate.com/' + modelname, 'best'], stdout=FNULL, stderr=subprocess.STDOUT)
+            # subprocess.check_call(['livestreamer.exe', '-Q', '--hls-segment-threads', '6','-o',path,'https://chaturbate.com/' + modelname, 'best'])
+            models_online.remove(modelname)
+        except Exception:
+            logging.info('No stream on ' + modelname)
