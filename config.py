@@ -84,3 +84,5 @@ Version = Config_file('version','Version')
 RTMPDUMP = Config_file('advanced','RTMPDUMP')
 # Enable storing html to debug.log file + set logging level
 Debugging = ast.literal_eval(Config_file('debug','Debugging'))
+LIVESTREAMER = Config_file('advanced','LIVESTREAMER')
+models_online = []
