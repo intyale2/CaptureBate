@@ -28,8 +28,10 @@ Before you can start capturing streams you first need to [follow](https://i.imgu
 
 Running & Output
 ===========
-
+On linux:
 To start capturing streams you need to run `python main.py` I reccomend you do this in [screen](https://www.gnu.org/software/screen/) as there is no output and it can just be left running in the background. To see what's going on run `tail -f output.log`
+On windows:
+Start the main.py file, and the python window will have some basic information. If you want you can get tail for windows or something, and look at the output.log file.
 
 Standard output should look something this when recording streams ..
 
