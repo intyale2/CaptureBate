@@ -1,13 +1,13 @@
-CaptureBate
+CaptureBatefork
 ==========
 
 CaptureBate lets you follow and archive your favorite models shows on chaturbate.com
 
 Requirements
 ==========
-(Debian 7, minimum)
+python
 
-[RTMPDump(ksv)](https://github.com/BurntSushi/rtmpdump-ksv) used to capture the streams.
+[Livestreamer](https://github.com/chrippa/livestreamer) used to capture the streams.
 
 [BeautifulSoup4](https://pypi.python.org/pypi/beautifulsoup4/4.3.2) the screen-scraping library.
 
@@ -53,8 +53,4 @@ Standard output should look something this when recording streams ..
 Encoding
 ===========
 
-Once you've captured some streams you're going to need to convert the audio to have them play nice in vlc, etc. This is where ffmpeg comes in, there is no need to convert the video so this doesn't take too long. To convert individual files do `ffmpeg -i input.flv -vcodec copy -acodec libmp3lame output.mp4` this will convert the speex audio to mp3 and change the container to mp4 (stream is h264)
-
-If you want to batch convert your captured streams run `find ./ -name '*.flv' -execdir mkdir converted_bates \;; for file in *.flv; do ffmpeg -i "$file" -vcodec copy -acodec libmp3lame "converted_bates/${file%.flv}.mp4"; done` from your `CaptureBate/Captured/` directory.
-
-If you don't want to do any conversion you can install the [speex audio codec](http://speex.org/downloads/) which is a huge pain in the ass to get working correctly under linux/vlc.
+The streams i get with livestreamer is h264 video and aac audio, so doesn't seem to be any need for converting, but you might get different.
