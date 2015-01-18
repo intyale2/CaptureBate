@@ -15,7 +15,7 @@ def Models_list(client):
 	except Exception, e:
 		logging.error('Some error during connecting to '+URL)
 		logging.error(e)
-		print 'error connecting to chaturbate'
+		print ('error connecting to chaturbate')
 		return ''
 	soup = BeautifulSoup(r2.text)
 	#logging.debug('Page Source for ' + URL_follwed + '\n' + r2.text)
