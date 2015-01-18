@@ -81,7 +81,6 @@ Log_file = Config_file('files','Log_file')
 wishlist_file = Config_file('files','wishlist_file')
 Time_delay = int(Config_file('delays','Time_delay'))
 Version = Config_file('version','Version')
-RTMPDUMP = Config_file('advanced','RTMPDUMP')
 # Enable storing html to debug.log file + set logging level
 Debugging = ast.literal_eval(Config_file('debug','Debugging'))
 LIVESTREAMER = Config_file('advanced','LIVESTREAMER')
