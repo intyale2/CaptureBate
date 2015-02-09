@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import re
 import time, datetime
 import signal, os
+import subprocess
 
 def Models_list(client):
 	# Moving to followed models page
