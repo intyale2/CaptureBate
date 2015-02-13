@@ -16,7 +16,21 @@ def Connection():
 			client.mount('https://', MyAdapter())
 			# Retrieve the CSRF token first
 			r1 = client.get(URL)
-			break
+			csrftoken = r1.cookies['csrftoken']
+			# Set login data and perform submit
+			login_data = dict(username=USER, password=PASS, csrfmiddlewaretoken=csrftoken, next='/')
+			try:
+				r = client.post(URL, data=login_data, headers=dict(Referer=URL))
+				page_source = 'Page Source for ' + URL + '\n' + r.text
+			except Exception, e:
+				logging.error('Some error during posting to '+URL)
+				logging.error(e)		
+			#logging.debug('Page Source for ' + URL + '\n' + r.text)
+			
+			# if Debugging is enabled Page source goes to debug.log file
+			if Debugging == True:
+				Store_Debug(page_source, "connection.log")
+			return client
 		except Exception, e:
 			logging.error('Some error during connecting to '+URL)
 			logging.error(e)
@@ -27,21 +41,6 @@ def Connection():
 				sleep(1800)
 				count = 0
 			sleep(60)
-
-	csrftoken = r1.cookies['csrftoken']
-	# Set login data and perform submit
-	login_data = dict(username=USER, password=PASS, csrfmiddlewaretoken=csrftoken, next='/')
-	try:
-		r = client.post(URL, data=login_data, headers=dict(Referer=URL))
-	except Exception, e:
-		logging.error('Some error during posting to '+URL)
-		logging.error(e)		
-	#logging.debug('Page Source for ' + URL + '\n' + r.text)
-	page_source = 'Page Source for ' + URL + '\n' + r.text
-	# if Debugging is enabled Page source goes to debug.log file
-	if Debugging == True:
-		Store_Debug(page_source, "connection.log")
-	return client		
 
 
 
