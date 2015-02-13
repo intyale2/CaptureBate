@@ -80,6 +80,7 @@ def addmodel(modelname):
                 os.makedirs(Video_folder+'/'+modelname)
             # Starting livestreamer
             FNULL = open(os.devnull, 'w')
+            modelname = str(modelname)
             subprocess.check_call([LIVESTREAMER, '-Q', '--hls-segment-threads', '6','-o',path,'https://chaturbate.com/' + modelname, 'best'], stdout=FNULL, stderr=subprocess.STDOUT)
             # subprocess.check_call(['livestreamer.exe', '-Q', '--hls-segment-threads', '6','-o',path,'https://chaturbate.com/' + modelname, 'best'])
             models_online.remove(modelname)
