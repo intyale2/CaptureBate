@@ -7,6 +7,7 @@ import re
 import time, datetime
 import signal, os
 import subprocess
+import psutil
 
 def Models_list(client):
 	# Moving to followed models page
@@ -53,7 +54,12 @@ def Select_models(Models_list):
     return Model_list_approved
 
 def Compare_lists(ml, mlr):
-	# Comparing old models list(Main list) to new(updated) models list
+    for model in mlr:
+        if checkIfModelRecorded(model) == False:
+            logging.debug("[Compare_lists CheckModelRecorded] Model " + model + " is supposed to be recording, but I could not find the process.")
+            print ("[Compare_lists CheckModelRecorded] Model " + model + " is supposed to be recording, but I could not find the process.")
+            mlr.remove(model)
+    # Comparing old models list(Main list) to new(updated) models list
     # This loop is used for removing offline models from main list
     ml_new = []
     logging.info('[Compare_lists] Checking model list:')
@@ -66,9 +72,22 @@ def Compare_lists(ml, mlr):
     		ml_new.append(model)
     logging.debug("[Compare_lists] List of models after comparing:" + str(ml_new))
     return ml_new
+
+def checkIfModelRecorded(model):
+	for proc in psutil.process_iter():
+		cmd = ' '.join(proc.cmdline())
+		if model in cmd:
+			return True
+	return False
+
 def addmodel(modelname):
     models_online
     # Checking that it's not already recording model
+    if modelname in models_online:
+        if checkIfModelRecorded(modelname) == False:
+            print ("[CheckModelRecorded] Model " + modelname + " is supposed to be recording, but I could not find the process.")
+            logging.debug("[CheckModelRecorded] Model " + modelname + " is supposed to be recording, but I could not find the process.")
+            models_online.remove(modelname)
     if not modelname in models_online:
         try:
             models_online.append(modelname)
@@ -81,7 +100,8 @@ def addmodel(modelname):
             # Starting livestreamer
             FNULL = open(os.devnull, 'w')
             modelname = str(modelname)
-            subprocess.check_call([LIVESTREAMER, '-Q', '--hls-segment-threads', '6','-o',path,'https://chaturbate.com/' + modelname, 'best'], stdout=FNULL, stderr=subprocess.STDOUT)
+            subprocess.check_call([LIVESTREAMER, '-Q', '-o',path,'http://chaturbate.com/' + modelname, 'best'], stdout=FNULL, stderr=subprocess.STDOUT)
+            #subprocess.check_call([LIVESTREAMER, '-Q', '--hls-segment-threads', '6','-o',path,'https://chaturbate.com/' + modelname, 'best'], stdout=FNULL, stderr=subprocess.STDOUT)
             # subprocess.check_call(['livestreamer.exe', '-Q', '--hls-segment-threads', '6','-o',path,'https://chaturbate.com/' + modelname, 'best'])
             models_online.remove(modelname)
         except Exception:
