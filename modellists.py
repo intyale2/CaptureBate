@@ -74,9 +74,10 @@ def Compare_lists(ml, mlr):
     return ml_new
 
 def checkIfModelRecorded(model):
+	_u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
 	for proc in psutil.process_iter():
 		cmd = ' '.join(proc.cmdline())
-		if model in cmd:
+		if _u(model) in _u(cmd):
 			return True
 	return False
 
