@@ -76,9 +76,13 @@ def Compare_lists(ml, mlr):
 def checkIfModelRecorded(model):
 	_u = lambda t: t.decode('UTF-8', 'replace') if isinstance(t, str) else t
 	for proc in psutil.process_iter():
-		cmd = ' '.join(proc.cmdline())
-		if _u(model) in _u(cmd):
-			return True
+		try:
+			cmd = ' '.join(proc.cmdline())
+			if _u(model) in _u(cmd):
+				return True
+		except psutil.NoSuchProcess:
+			# Process we tried to look at vanished while iterating over the processlist
+			pass
 	return False
 
 def addmodel(modelname):
