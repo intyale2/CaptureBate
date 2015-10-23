@@ -58,7 +58,10 @@ def Compare_lists(ml, mlr):
         if checkIfModelRecorded(model) == False:
             logging.debug("[Compare_lists CheckModelRecorded] Model " + model + " is supposed to be recording, but I could not find the process.")
             print ("[Compare_lists CheckModelRecorded] Model " + model + " is supposed to be recording, but I could not find the process.")
-            mlr.remove(model)
+            try:
+                mlr.remove(model)
+            except ValueError:
+                pass # Model was removed from the modellist WHILE we are iterating over it (recording process ended properly?)
     # Comparing old models list(Main list) to new(updated) models list
     # This loop is used for removing offline models from main list
     ml_new = []
