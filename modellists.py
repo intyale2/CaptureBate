@@ -83,8 +83,9 @@ def checkIfModelRecorded(model):
 			cmd = ' '.join(proc.cmdline())
 			if _u(model) in _u(cmd):
 				return True
-		except psutil.NoSuchProcess:
+		except (psutil.NoSuchProcess, psutil.AccessDenied):
 			# Process we tried to look at vanished while iterating over the processlist
+			# or we have no permissions to look at it's cmdline (maybe a superuser process?)
 			pass
 	return False
 
