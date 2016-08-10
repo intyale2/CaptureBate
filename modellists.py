@@ -125,10 +125,13 @@ def addmodel(modelname):
             logging.debug("[CheckModelRecorded] Model " + modelname + " is supposed to be recording, but I could not find the process.")
             models_online.remove(modelname)
     if not modelname in models_online:
+        logging.debug('emailEnable = '+emailEnable)
+        if emailEnable == 'True':
+            logging.info('sending email for '+modelname)
+            sendMail(emailTo,emailFrom,"Recording Started","%s is now being recorded" % modelname)
         try:
             models_online.append(modelname)
             logging.info('Starting recording of ' + modelname)
-            sendMail(emailTo,emailFrom,"Recording Started","%s is now being recorded" % modelname)
             timestamp = time.strftime("%d-%m-%Y_%H-%M-%S")
             path = Video_folder+'/'+modelname+'/'+modelname+'_'+timestamp+'.mp4'
             if not os.path.exists(Video_folder+'/'+modelname):

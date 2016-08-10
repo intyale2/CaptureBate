@@ -92,4 +92,5 @@ Debugging = ast.literal_eval(Config_file('debug','Debugging'))
 LIVESTREAMER = Config_file('advanced','LIVESTREAMER')
 emailFrom = Config_file('email','From')
 emailTo = [Config_file('email','To')]
+emailEnable = Config_file('email','Enable')
 models_online = []
