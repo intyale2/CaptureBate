@@ -3,11 +3,6 @@ CaptureBatefork
 
 CaptureBate lets you follow and archive your favorite models shows on chaturbate.com
 
-Changes between ohhdemgirls and redyready
-==========
-Uses livestreamer to capture
-The Video_folder must have the full path or is a folder in the same directory as CaptureBate.
-
 Requirements
 ==========
 python
@@ -21,7 +16,10 @@ python
 Setup
 ===========
 
-Install requirements `sudo pip install -r requirements.txt`
+Install required software, on Ubuntu 16.04 `sudo apt install python python-pip livestreamer ffmpeg`
+If you want email notifications, install and configure postfix (`sudo apt install postfix`)
+
+Install required packages `sudo pip install -r requirements.txt`
 
 Get a [chaturbate account](https://chaturbate.com/accounts/register/), once you're signed up put your credentials in the `config.conf` file and - if needed - adjust the other options.
 
@@ -60,4 +58,4 @@ Standard output should look something this when recording streams ..
 Encoding
 ===========
 
-The streams i get with livestreamer is h264 video and aac audio, so doesn't seem to be any need for converting, but you might get different.
+The streams I get with livestreamer is h264 video and aac audio, so doesn't seem to be any need for converting, but you might get different.
