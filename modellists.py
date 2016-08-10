@@ -52,7 +52,7 @@ def Select_models(Models_list):
     Model_list_approved = []
     logging.info('[Select_models] Which models are approved?')
     for model in Models_list:
-    	if Disable_wishlist == False:
+    	if Disable_wishlist == 'False':
 	        if model in Wish_list:
 	            logging.info("[Select_models] " + model+ ' is approved')
 	            Model_list_approved.append(model)
