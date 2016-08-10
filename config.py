@@ -90,4 +90,6 @@ Disable_wishlist = Config_file('advanced','Disable_wishlist')
 # Enable storing html to debug.log file + set logging level
 Debugging = ast.literal_eval(Config_file('debug','Debugging'))
 LIVESTREAMER = Config_file('advanced','LIVESTREAMER')
+emailFrom = Config_file('email','From')
+emailTo = [Config_file('email','To')]
 models_online = []

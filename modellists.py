@@ -8,6 +8,12 @@ import time, datetime
 import signal, os
 import subprocess
 import psutil
+import smtplib
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEBase import MIMEBase
+from email.MIMEText import MIMEText
+from email.Utils import COMMASPACE, formatdate
+from email import Encoders
 
 def Models_list(client):
 	# Moving to followed models page
@@ -93,6 +99,23 @@ def checkIfModelRecorded(model):
 			pass
 	return False
 
+def sendMail(to, fro, subject, text, files=[],server="localhost"):
+    assert type(to)==list
+    assert type(files)==list
+ 
+ 
+    msg = MIMEMultipart()
+    msg['From'] = fro
+    msg['To'] = COMMASPACE.join(to)
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+ 
+    msg.attach( MIMEText(text) )
+ 
+    smtp = smtplib.SMTP(server)
+    smtp.sendmail(fro, to, msg.as_string() )
+    smtp.close()
+
 def addmodel(modelname):
     models_online
     # Checking that it's not already recording model
@@ -105,6 +128,7 @@ def addmodel(modelname):
         try:
             models_online.append(modelname)
             logging.info('Starting recording of ' + modelname)
+            sendMail(emailTo,emailFrom,"Recording Started","%s is now being recorded" % modelname)
             timestamp = time.strftime("%d-%m-%Y_%H-%M-%S")
             path = Video_folder+'/'+modelname+'/'+modelname+'_'+timestamp+'.mp4'
             if not os.path.exists(Video_folder+'/'+modelname):
