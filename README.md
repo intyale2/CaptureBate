@@ -3,6 +3,11 @@ CaptureBatefork
 
 CaptureBate lets you follow and archive your favorite models shows on chaturbate.com
 
+Changes between ohhdemgirls and redyready
+==========
+Uses livestreamer to capture
+The Video_folder must have the full path or is a folder in the same directory as CaptureBate.
+
 Requirements
 ==========
 python

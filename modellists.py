@@ -1,5 +1,5 @@
 '''
-Functions such as getting models list, details for rtmpdump, etc.
+Functions such as getting models list, details for livestreamer, etc.
 '''
 from config import *
 from bs4 import BeautifulSoup
@@ -46,9 +46,13 @@ def Select_models(Models_list):
     Model_list_approved = []
     logging.info('[Select_models] Which models are approved?')
     for model in Models_list:
-        if model in Wish_list:
-            logging.info("[Select_models] " + model+ ' is approved')
-            Model_list_approved.append(model)
+    	if Disable_wishlist == False:
+	        if model in Wish_list:
+	            logging.info("[Select_models] " + model+ ' is approved')
+	            Model_list_approved.append(model)
+	else:
+		logging.info("[Select_models] " + model+ ' is approved')
+	        Model_list_approved.append(model)
     if len(Model_list_approved) == 0:
         logging.warning('[Select_models]  No models for approving')
     return Model_list_approved
